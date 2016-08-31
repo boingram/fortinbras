@@ -1,0 +1,6 @@
+[package]
+name = "fortinbras"
+version = "0.1.0"
+authors = ["Bo Ingram <boingram6@gmail.com>"]
+
+[dependencies]
