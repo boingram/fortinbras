@@ -1,32 +1,32 @@
-use storage::in_memory::InMemoryStorage;
+use std::collections::HashMap;
 
-/// StorageClient exposes a simple interface to insert, read, and remove
-/// keys from Fortinbras.
-pub struct StorageClient {
-    in_memory: InMemoryStorage,
+/// InMemoryStorage holds key-value pairs before they are persisted
+/// to disk. All mutable operations occur here, and reads should
+/// first check here before reading from disk.
+pub struct InMemoryStorage {
+    data: HashMap<String, String>,
 }
 
-impl StorageClient {
-    /// Creates a new instance of the StorageClient with newly initialized
-    /// in-memory storage.
-    pub fn new() -> StorageClient {
-        StorageClient { in_memory: InMemoryStorage::new() }
+impl InMemoryStorage {
+    pub fn new() -> InMemoryStorage {
+        InMemoryStorage { data: HashMap::new() }
     }
 
-    /// Given a &String key, retrieve an optional result.
+    /// Get a value for a given key from the in memory storage map.
     pub fn get(&self, key: &String) -> Option<&String> {
-        self.in_memory.get(key)
+        self.data.get(key)
     }
 
-    /// Insert a value for a given key, returning the optional previously
-    /// existing value for the key.
+    /// Insert a value for a given key into the map, returning the optional
+    /// previously existing value.
     pub fn insert(&mut self, key: String, val: String) -> Option<String> {
-        self.in_memory.insert(key, val)
+        self.data.insert(key, val)
     }
 
-    /// Remove a key, returning the optional previously existing value.
+    /// Remove a value for a given key from the map, returning the optional
+    /// previously existing value.
     pub fn remove(&mut self, key: &String) -> Option<String> {
-        self.in_memory.remove(key)
+        self.data.remove(key)
     }
 }
 
@@ -37,7 +37,7 @@ mod tests {
 
     #[test]
     fn test_insert_get_remove_get() {
-        let mut store = StorageClient::new();
+        let mut store = InMemoryStorage::new();
         assert_eq!(store.insert(String::from("a"), String::from("b")),
                    Option::None);
         assert_eq!(store.get(&String::from("a")),
