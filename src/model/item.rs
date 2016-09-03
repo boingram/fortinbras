@@ -40,7 +40,6 @@ impl Item {
 #[cfg(test)]
 mod tests {
 
-    use rustc_serialize::json;
     use super::*;
 
     #[test]

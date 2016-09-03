@@ -1,8 +1,12 @@
+extern crate hyper;
 extern crate rustc_serialize;
+
 pub mod model;
+pub mod server;
 pub mod storage;
-use storage::client::StorageClient;
+
+use server::server::FortinbrasServer;
 
 fn main() {
-    println!("Hello, world!");
+    FortinbrasServer::launch(String::from("7341"));
 }
