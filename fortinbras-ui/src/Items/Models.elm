@@ -18,6 +18,10 @@ newItem key val =
     }
 
 
+
+-- Unwrap a value (which is just a type aliased Maybe) into a printable string
+
+
 unwrap : Value -> String
 unwrap val =
     case val of
