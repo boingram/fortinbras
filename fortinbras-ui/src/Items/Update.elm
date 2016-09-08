@@ -7,5 +7,8 @@ import Items.Models exposing (Item)
 update : Msg -> Item -> ( Item, Cmd Msg )
 update message item =
     case message of
-        NoOp ->
+        FetchItemComplete item ->
+            ( item, Cmd.none )
+
+        FetchItemFail error ->
             ( item, Cmd.none )
