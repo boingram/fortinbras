@@ -16,14 +16,14 @@ type Route
 matchers : Parser (Route -> a) a
 matchers =
     oneOf
-        [ format HomeRoute (s "")
-        , format GetItemRoute (s "items/read")
-        , format CreateItemRoute (s "items/create")
-        , format DeleteItemRoute (s "items/delete")
+        [ format HomeRoute (s home)
+        , format ReadItemRoute (s readItem)
+        , format CreateItemRoute (s createItem)
+        , format DeleteItemRoute (s deleteItem)
         ]
 
 
-hashParser : Navigation.Loction -> Result String Route
+hashParser : Navigation.Location -> Result String Route
 hashParser location =
     location.hash
         |> String.dropLeft 1
@@ -43,3 +43,23 @@ routeFromResult result =
 
         Err string ->
             NotFoundRoute
+
+
+createItem : String
+createItem =
+    "items/create"
+
+
+deleteItem : String
+deleteItem =
+    "items/delete"
+
+
+readItem : String
+readItem =
+    "items/read"
+
+
+home : String
+home =
+    ""

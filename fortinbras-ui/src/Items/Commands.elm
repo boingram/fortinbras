@@ -1,4 +1,4 @@
-module Item.Commands exposing (..)
+module Items.Commands exposing (..)
 
 import Http
 import Items.Messages exposing (..)
@@ -7,10 +7,10 @@ import Json.Decode as Decode exposing ((:=))
 import Task
 
 
-fetchItem : Cmd Msg
-fetchItem =
-    Http.get collectionDecoder fetchItemUrl
-        |> Task.perform FetchItemFail FetchAllComplete
+fetchItem : String -> Cmd Msg
+fetchItem key =
+    Http.get collectionDecoder (fetchItemUrl key)
+        |> Task.perform FetchItemFail FetchItemComplete
 
 
 fetchItemUrl : String -> String
