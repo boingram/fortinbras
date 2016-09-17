@@ -1,7 +1,8 @@
 module Items.Read exposing (..)
 
 import Html exposing (..)
-import Html.Attributes exposing (class)
+import Html.Attributes exposing (placeholder)
+import Html.Events exposing (onClick, onInput)
 import Items.Messages exposing (..)
 import Items.Models exposing (Item, unwrap)
 
@@ -9,8 +10,17 @@ import Items.Models exposing (Item, unwrap)
 view : Item -> Html Msg
 view item =
     div []
-        [ itemHeader item
+        [ form item
+        , itemHeader item
         , itemFields item
+        ]
+
+
+form : Item -> Html Msg
+form item =
+    div []
+        [ input [ placeholder "Key", onInput KeyInput ] []
+        , button [ onClick ReadKey ] [ text "Read" ]
         ]
 
 

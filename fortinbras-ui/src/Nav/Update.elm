@@ -5,7 +5,7 @@ import Nav.Models exposing (Nav, newNav)
 
 
 update : Msg -> Nav -> ( Nav, Cmd Msg )
-update message prevNav =
+update message nav =
     case message of
         RouteSelected route ->
-            ( newNav route, Cmd.none )
+            ( { nav | selectedRoute = route }, Cmd.none )

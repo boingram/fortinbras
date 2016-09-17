@@ -7,3 +7,5 @@ import Items.Models exposing (Item)
 type Msg
     = FetchItemComplete Item
     | FetchItemFail Http.Error
+    | KeyInput String
+    | ReadKey

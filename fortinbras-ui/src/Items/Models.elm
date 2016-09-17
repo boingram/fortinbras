@@ -2,8 +2,9 @@ module Items.Models exposing (..)
 
 
 type alias Item =
-    { key : String
-    , val : Maybe String
+    { inputKey : Maybe String
+    , key : String
+    , val : Value
     }
 
 
@@ -13,7 +14,8 @@ type alias Value =
 
 newItem : String -> Value -> Item
 newItem key val =
-    { key = key
+    { inputKey = Nothing
+    , key = key
     , val = val
     }
 

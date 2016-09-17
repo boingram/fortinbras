@@ -11,8 +11,8 @@ type alias Model =
     }
 
 
-initialModel : Model
-initialModel =
+initialModel : Routing.Route -> Model
+initialModel route =
     { item = newItem "Default Key" Nothing
-    , nav = newNav Routing.HomeRoute
+    , nav = newNav route
     }

@@ -2,9 +2,10 @@ module Nav.View exposing (..)
 
 import Html exposing (..)
 import Html.Attributes exposing (href)
+import Html.Events exposing (onClick)
 import Nav.Messages exposing (..)
 import Nav.Models exposing (Nav)
-import Routing exposing (createItem, deleteItem, home, readItem)
+import Routing exposing (..)
 
 
 view : Nav -> Html Msg
@@ -17,14 +18,14 @@ links : Nav -> Html Msg
 links nav =
     div []
         [ ul []
-            [ li [] [ button nav home "Home" ]
-            , li [] [ button nav createItem "Create" ]
-            , li [] [ button nav deleteItem "Delete" ]
-            , li [] [ button nav readItem "Read" ]
+            [ li [] [ clickable nav HomeRoute "Home" ]
+            , li [] [ clickable nav CreateItemRoute "Create" ]
+            , li [] [ clickable nav DeleteItemRoute "Delete" ]
+            , li [] [ clickable nav ReadItemRoute "Read" ]
             ]
         ]
 
 
-button : Nav -> String -> String -> Html Msg
-button nav routePath linkText =
-    a [ href routePath ] [ text linkText ]
+clickable : Nav -> Route -> String -> Html Msg
+clickable nav route linkText =
+    button [ onClick (RouteSelected route) ] [ text linkText ]

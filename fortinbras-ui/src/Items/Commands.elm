@@ -20,6 +20,7 @@ fetchItemUrl key =
 
 collectionDecoder : Decode.Decoder Item
 collectionDecoder =
-    Decode.object2 Item
+    Decode.object3 Item
+        (Decode.maybe ("inputKey" := Decode.string))
         ("key" := Decode.string)
         (Decode.maybe ("val" := Decode.string))

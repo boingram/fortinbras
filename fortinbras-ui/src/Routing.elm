@@ -16,10 +16,10 @@ type Route
 matchers : Parser (Route -> a) a
 matchers =
     oneOf
-        [ format HomeRoute (s home)
-        , format ReadItemRoute (s readItem)
-        , format CreateItemRoute (s createItem)
-        , format DeleteItemRoute (s deleteItem)
+        [ format HomeRoute (s "")
+        , format ReadItemRoute (s "items" </> s "read")
+        , format CreateItemRoute (s "items" </> s "create")
+        , format DeleteItemRoute (s "items" </> s "delete")
         ]
 
 
