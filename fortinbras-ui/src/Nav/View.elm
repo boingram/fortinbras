@@ -1,7 +1,7 @@
 module Nav.View exposing (..)
 
 import Html exposing (..)
-import Html.Attributes exposing (href)
+import Html.Attributes exposing (class, href)
 import Html.Events exposing (onClick)
 import Nav.Messages exposing (..)
 import Nav.Models exposing (Nav)
@@ -10,7 +10,7 @@ import Routing exposing (..)
 
 view : Nav -> Html Msg
 view nav =
-    div []
+    div [ class "nav" ]
         [ links nav ]
 
 

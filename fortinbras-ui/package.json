@@ -20,5 +20,10 @@
     "webpack": "^1.13.2",
     "webpack-dev-middleware": "^1.7.0",
     "webpack-dev-server": "^1.15.2"
+  },
+  "devDependencies": {
+    "node-sass": "^3.10.0",
+    "sass-loader": "^4.0.2",
+    "webpack": "^1.13.2"
   }
 }

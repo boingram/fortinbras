@@ -2,6 +2,7 @@ module View exposing (..)
 
 import Html exposing (Html, div, text)
 import Html.App
+import Html.Attributes exposing (class)
 import Items.Read
 import Messages exposing (Msg(..))
 import Models exposing (Model)
@@ -43,6 +44,6 @@ page model =
 
 notImplementedView : Html msg
 notImplementedView =
-    div []
+    div [ class "main" ]
         [ text "Not implemented"
         ]
