@@ -1,21 +1,33 @@
 module Items.Update exposing (..)
 
-import Items.Commands exposing (fetchItem)
+import Items.Commands exposing (fetchItem, writeItem)
 import Items.Messages exposing (Msg(..))
-import Items.Models exposing (Item, unwrap)
+import Items.Models exposing (blankItem, Item, unwrap)
 
 
 update : Msg -> Item -> ( Item, Cmd Msg )
-update message item =
+update message originalItem =
     case message of
         FetchItemComplete item ->
             ( item, Cmd.none )
 
         FetchItemFail error ->
-            ( item, Cmd.none )
+            ( originalItem, Cmd.none )
 
         KeyInput key ->
-            ( { item | inputKey = Just key }, Cmd.none )
+            ( { originalItem | inputKey = Just key }, Cmd.none )
 
         ReadKey ->
-            ( item, fetchItem (unwrap item.inputKey) )
+            ( originalItem, fetchItem (unwrap originalItem.inputKey) )
+
+        ValInput val ->
+            ( { originalItem | inputVal = Just val }, Cmd.none )
+
+        WriteItem item ->
+            ( blankItem, writeItem item )
+
+        WriteItemSuccess item ->
+            ( item, Cmd.none )
+
+        WriteItemFail error ->
+            ( originalItem, Cmd.none )

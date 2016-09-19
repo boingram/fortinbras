@@ -1,3 +1,4 @@
+use hyper::header::{AccessControlAllowHeaders, AccessControlAllowMethods, AccessControlAllowOrigin};
 use hyper::method::Method;
 use hyper::server::{Server, Request, Response};
 use hyper::status::StatusCode;
@@ -7,6 +8,7 @@ use model::item::Item;
 use std::io::Read;
 use std::sync::RwLock;
 use storage::client::StorageClient;
+use unicase::UniCase;
 
 /// Web server containing a storage client. Accepts HTTP requests to create, 
 /// remove, and update keys.
@@ -27,6 +29,7 @@ impl FortinbrasServer {
             .unwrap()
             .handle(move |req: Request, mut res: Response| {
                 match req.method {
+                    Method::Options => server.read().unwrap().options(res),
                     Method::Post => server.write().unwrap().insert(req, res),
                     Method::Delete => server.write().unwrap().remove(req, res), 
                     Method::Get => server.read().unwrap().get(req, res),
@@ -36,8 +39,15 @@ impl FortinbrasServer {
             .unwrap();
     }
 
+    /// Respond to preflight requests from fortinbras-ui 
+    fn options(&self, mut res: Response) {
+        add_cors_headers(&mut res);    
+    }
+
     /// Insert a key at POST /items with a body of {"key": "k", "val": "val"}
     fn insert(&mut self, mut req: Request, mut res: Response) {
+        add_cors_headers(&mut res);
+
         let url = match get_url(&req) {
             Some(x) => x,
             None => {
@@ -73,6 +83,8 @@ impl FortinbrasServer {
 
     /// Deletes a key via DELETE /items?key=k
     fn remove(&mut self, mut req: Request, mut res: Response) {
+        add_cors_headers(&mut res);
+
         let url = match get_url(&req) {
             Some(x) => x,
             None => {
@@ -111,6 +123,8 @@ impl FortinbrasServer {
 
     /// Retrieves an item via GET /items?key=k
     fn get(&self, req: Request, mut res: Response) {
+        add_cors_headers(&mut res);
+
         let url = match get_url(&req) {
             Some(x) => x,
             None => {
@@ -161,7 +175,18 @@ fn get_url<>(req: &Request) -> Option<Url> {
         }
     };
 
-    let base_url = Url::parse(&"http://localhost:7431").unwrap();
+    let base_url = Url::parse(&"http://localhost:7341").unwrap();
     Some(base_url.join(&path).unwrap())
 }
 
+fn add_cors_headers(res: &mut Response) {
+    res.headers_mut().set(
+        AccessControlAllowHeaders(vec![UniCase("Content-Type".to_owned())])
+    );
+    res.headers_mut().set(
+        AccessControlAllowMethods(vec![Method::Get, Method::Post, Method::Delete])
+    );
+    res.headers_mut().set(
+        AccessControlAllowOrigin::Value("*".to_owned())
+    );
+}

@@ -45,6 +45,25 @@ routeFromResult result =
             NotFoundRoute
 
 
+getPath : Route -> String
+getPath route =
+    case route of
+        HomeRoute ->
+            home
+
+        CreateItemRoute ->
+            createItem
+
+        DeleteItemRoute ->
+            deleteItem
+
+        ReadItemRoute ->
+            readItem
+
+        NotFoundRoute ->
+            home
+
+
 createItem : String
 createItem =
     "items/create"

@@ -1,6 +1,6 @@
 module Models exposing (..)
 
-import Items.Models exposing (Item, newItem)
+import Items.Models exposing (Item, blankItem)
 import Nav.Models exposing (Nav, newNav)
 import Routing exposing (Route)
 
@@ -13,6 +13,6 @@ type alias Model =
 
 initialModel : Routing.Route -> Model
 initialModel route =
-    { item = newItem "Default Key" Nothing
+    { item = blankItem
     , nav = newNav route
     }

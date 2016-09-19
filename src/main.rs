@@ -1,5 +1,6 @@
 extern crate hyper;
 extern crate rustc_serialize;
+extern crate unicase;
 
 pub mod model;
 pub mod server;

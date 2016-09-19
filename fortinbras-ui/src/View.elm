@@ -3,7 +3,9 @@ module View exposing (..)
 import Html exposing (Html, div, text)
 import Html.App
 import Html.Attributes exposing (class)
+import Items.Models exposing (blankItem)
 import Items.Read
+import Items.Write
 import Messages exposing (Msg(..))
 import Models exposing (Model)
 import Nav.View
@@ -33,7 +35,7 @@ page model =
             Html.App.map ItemsMsg (Items.Read.view model.item)
 
         CreateItemRoute ->
-            notImplementedView
+            Html.App.map ItemsMsg (Items.Write.view model.item)
 
         DeleteItemRoute ->
             notImplementedView

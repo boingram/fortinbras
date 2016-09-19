@@ -9,3 +9,7 @@ type Msg
     | FetchItemFail Http.Error
     | KeyInput String
     | ReadKey
+    | ValInput String
+    | WriteItem Item
+    | WriteItemSuccess Item
+    | WriteItemFail Http.Error

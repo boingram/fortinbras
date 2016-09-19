@@ -1,5 +1,6 @@
 module Update exposing (..)
 
+import Items.Models exposing (blankItem)
 import Items.Update
 import Messages exposing (Msg(..))
 import Models exposing (Model)
@@ -21,4 +22,4 @@ update msg model =
                 ( updatedNav, cmd ) =
                     Nav.Update.update navMsg model.nav
             in
-                ( { model | nav = updatedNav }, Cmd.map NavMsg cmd )
+                ( { model | nav = updatedNav, item = blankItem }, Cmd.map NavMsg cmd )

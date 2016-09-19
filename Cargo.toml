@@ -6,3 +6,4 @@ authors = ["Bo Ingram <boingram6@gmail.com>"]
 [dependencies]
 hyper = "0.9.10"
 rustc-serialize = "0.3"
+unicase = "1.4.0"

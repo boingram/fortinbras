@@ -2,29 +2,48 @@ module Items.Models exposing (..)
 
 
 type alias Item =
-    { inputKey : Maybe String
-    , key : String
-    , val : Value
+    { inputKey : ItemField
+    , inputVal : ItemField
+    , key : ItemField
+    , val : ItemField
     }
 
 
-type alias Value =
+type alias ItemField =
     Maybe String
 
 
-newItem : String -> Value -> Item
+newItem : ItemField -> ItemField -> Item
 newItem key val =
     { inputKey = Nothing
+    , inputVal = Nothing
     , key = key
     , val = val
     }
 
 
+blankItem : Item
+blankItem =
+    { inputKey = Nothing
+    , inputVal = Nothing
+    , key = Nothing
+    , val = Nothing
+    }
 
--- Unwrap a value (which is just a type aliased Maybe) into a printable string
+
+inputAsItem : Item -> Item
+inputAsItem item =
+    { item
+        | key = item.inputKey
+        , val = item.inputVal
+    }
 
 
-unwrap : Value -> String
+
+-- Unwrap an item field (which is just a type aliased Maybe) into a printable string
+
+
+unwrap : ItemField -> String
 unwrap val =
     case val of
         Just x ->

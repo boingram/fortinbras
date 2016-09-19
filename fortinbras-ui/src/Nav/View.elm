@@ -28,4 +28,8 @@ links nav =
 
 clickable : Nav -> Route -> String -> Html Msg
 clickable nav route linkText =
-    button [ onClick (RouteSelected route) ] [ text linkText ]
+    a
+        [ href ("#" ++ (Routing.getPath route))
+        , onClick (RouteSelected route)
+        ]
+        [ text linkText ]

@@ -31,7 +31,7 @@ form item =
 itemHeader : Item -> Html Msg
 itemHeader item =
     div []
-        [ h2 [] [ text item.key ] ]
+        [ h2 [] [ text (unwrap item.key) ] ]
 
 
 
@@ -44,7 +44,7 @@ itemFields item =
         [ table []
             [ tr []
                 [ th [] [ text "Key" ]
-                , tr [] [ text item.key ]
+                , tr [] [ text (unwrap item.key) ]
                 ]
             , tr []
                 [ th [] [ text "Value" ]

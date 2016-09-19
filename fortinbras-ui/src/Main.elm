@@ -2,6 +2,7 @@ module Main exposing (..)
 
 import Html.App
 import Items.Commands exposing (fetchItem)
+import Items.Models exposing (blankItem)
 import Messages exposing (Msg(..))
 import Models exposing (Model, initialModel)
 import Nav.Models exposing (newNav)
@@ -31,7 +32,7 @@ urlUpdate result model =
         currentRoute =
             Routing.routeFromResult result
     in
-        ( { model | nav = newNav currentRoute }, Cmd.none )
+        ( { model | nav = newNav currentRoute, item = blankItem }, Cmd.none )
 
 
 
