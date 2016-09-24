@@ -1,10 +1,10 @@
 module Items.Write exposing (..)
 
 import Html exposing (..)
-import Html.Attributes exposing (class, placeholder)
+import Html.Attributes exposing (class, placeholder, value)
 import Html.Events exposing (onClick, onInput)
 import Items.Messages exposing (..)
-import Items.Models exposing (inputAsItem, Item)
+import Items.Models exposing (inputAsItem, Item, unwrap)
 import Items.Read exposing (itemFields, itemHeader)
 
 
@@ -19,8 +19,8 @@ view item =
 form : Item -> Html Msg
 form item =
     div []
-        [ input [ placeholder "Key", onInput KeyInput ] []
-        , input [ placeholder "Value", onInput ValInput ] []
+        [ input [ placeholder "Key", onInput KeyInput, value (unwrap item.inputKey) ] []
+        , input [ placeholder "Value", onInput ValInput, value (unwrap item.inputVal) ] []
         , button [ onClick (WriteItem (inputAsItem item)) ]
             [ text "Write" ]
         ]

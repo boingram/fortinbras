@@ -24,7 +24,7 @@ update message originalItem =
             ( { originalItem | inputVal = Just val }, Cmd.none )
 
         WriteItem item ->
-            ( blankItem, writeItem item )
+            ( originalItem, writeItem item )
 
         WriteItemSuccess item ->
             ( item, Cmd.none )
