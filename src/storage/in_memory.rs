@@ -14,18 +14,21 @@ impl InMemoryStorage {
 
     /// Get a value for a given key from the in memory storage map.
     pub fn get(&self, key: &String) -> Option<&String> {
+        debug!("Retrieving value for key: {}", key);
         self.data.get(key)
     }
 
     /// Insert a value for a given key into the map, returning the optional
     /// previously existing value.
     pub fn insert(&mut self, key: String, val: String) -> Option<String> {
+        debug!("Inserting key {} and value {}", key, val);
         self.data.insert(key, val)
     }
 
     /// Remove a value for a given key from the map, returning the optional
     /// previously existing value.
     pub fn remove(&mut self, key: &String) -> Option<String> {
+        debug!("Removing key {}", key);
         self.data.remove(key)
     }
 }

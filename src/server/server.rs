@@ -77,6 +77,7 @@ impl FortinbrasServer {
         match self.storage_client.insert(item.key().clone(), item.val().clone()) {
             _ => {
                 res.send(json.as_bytes());
+                debug!("Server returning {} after write", json);
             }
         }
     }
@@ -115,6 +116,7 @@ impl FortinbrasServer {
                 match Item::new(arg, val.clone()).to_json() {
                     Ok(x) => {
                         res.send(x.as_bytes());
+                        debug!("Server returning {} after item deletion", x);
                     }
                     Err(_) => {
                         *res.status_mut() = StatusCode::InternalServerError;
@@ -163,6 +165,7 @@ impl FortinbrasServer {
                 match Item::new(arg, val.clone()).to_json() {
                     Ok(x) => {
                         res.send(x.as_bytes());
+                        debug!("Server returning {} on read", x);
                     }
                     Err(_) => {
                         *res.status_mut() = StatusCode::InternalServerError;
