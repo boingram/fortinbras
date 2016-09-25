@@ -5,7 +5,10 @@ import Items.Models exposing (Item)
 
 
 type Msg
-    = FetchItemComplete Item
+    = DeleteItem String
+    | DeleteItemSuccess Item
+    | DeleteItemFail Http.Error
+    | FetchItemComplete Item
     | FetchItemFail Http.Error
     | KeyInput String
     | ReadKey

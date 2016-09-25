@@ -110,9 +110,16 @@ impl FortinbrasServer {
             return;
         }
 
-        match self.storage_client.remove(&query_key) {
-            Some(_) => {
-                *res.status_mut() = StatusCode::NoContent;
+        match self.storage_client.remove(&arg) {
+            Some(val) => {
+                match Item::new(arg, val.clone()).to_json() {
+                    Ok(x) => {
+                        res.send(x.as_bytes());
+                    }
+                    Err(_) => {
+                        *res.status_mut() = StatusCode::InternalServerError;
+                    }
+                };
             }
             None => {
                 *res.status_mut() = StatusCode::NotFound;

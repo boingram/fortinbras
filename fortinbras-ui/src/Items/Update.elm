@@ -1,6 +1,6 @@
 module Items.Update exposing (..)
 
-import Items.Commands exposing (fetchItem, writeItem)
+import Items.Commands exposing (deleteItem, fetchItem, writeItem)
 import Items.Messages exposing (Msg(..))
 import Items.Models exposing (blankItem, Item, unwrap)
 
@@ -8,6 +8,15 @@ import Items.Models exposing (blankItem, Item, unwrap)
 update : Msg -> Item -> ( Item, Cmd Msg )
 update message originalItem =
     case message of
+        DeleteItem key ->
+            ( originalItem, deleteItem (key) )
+
+        DeleteItemSuccess item ->
+            ( item, Cmd.none )
+
+        DeleteItemFail error ->
+            ( originalItem, Cmd.none )
+
         FetchItemComplete item ->
             ( item, Cmd.none )
 

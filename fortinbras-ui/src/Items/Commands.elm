@@ -9,14 +9,34 @@ import Json.Encode as Encode
 import Task
 
 
+deleteItem : String -> Cmd Msg
+deleteItem key =
+    deleteItemTask key
+        |> Task.perform WriteItemFail WriteItemSuccess
+
+
+deleteItemTask : String -> Task.Task Http.Error Item
+deleteItemTask key =
+    let
+        config =
+            { verb = "DELETE"
+            , headers = [ ( "Content-Type", "application/json" ) ]
+            , url = readAndDeleteItemUrl key
+            , body = Http.empty
+            }
+    in
+        Http.send Http.defaultSettings config
+            |> Http.fromJson itemDecoder
+
+
 fetchItem : String -> Cmd Msg
 fetchItem key =
-    Http.get itemDecoder (fetchItemUrl key)
+    Http.get itemDecoder (readAndDeleteItemUrl key)
         |> Task.perform FetchItemFail FetchItemComplete
 
 
-fetchItemUrl : String -> String
-fetchItemUrl key =
+readAndDeleteItemUrl : String -> String
+readAndDeleteItemUrl key =
     "http://localhost:7341/items?key=" ++ key
 
 
