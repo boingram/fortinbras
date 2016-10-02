@@ -15,18 +15,18 @@ impl StorageClient {
 
     /// Given a &String key, retrieve an optional result.
     pub fn get(&self, key: &String) -> Option<&String> {
-        self.in_memory.get(key)
+        self.in_memory.get(&key.to_lowercase())
     }
 
     /// Insert a value for a given key, returning the optional previously
     /// existing value for the key.
     pub fn insert(&mut self, key: String, val: String) -> Option<String> {
-        self.in_memory.insert(key, val)
+        self.in_memory.insert(key.to_lowercase(), val)
     }
 
     /// Remove a key, returning the optional previously existing value.
     pub fn remove(&mut self, key: &String) -> Option<String> {
-        self.in_memory.remove(key)
+        self.in_memory.remove(&key.to_lowercase())
     }
 }
 
@@ -47,5 +47,12 @@ mod tests {
         assert_eq!(store.remove(&String::from("a")),
                    Option::Some(String::from("c")));
         assert_eq!(store.get(&String::from("a")), Option::None);
+    }
+
+    #[test]
+    fn test_lowercase_key_ops() {
+        let mut store = StorageClient::new();
+        store.insert(String::from("A"), String::from("b"));
+        assert_eq!(store.get(&String::from("A")), store.get(&String::from("a")));
     }
 }
