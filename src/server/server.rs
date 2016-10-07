@@ -76,6 +76,7 @@ impl FortinbrasServer {
 
         match self.storage_client.insert(item.key().clone(), item.val().clone()) {
             _ => {
+                *res.status_mut() = StatusCode::Created;
                 res.send(json.as_bytes());
                 debug!("Server returning {} after write", json);
             }

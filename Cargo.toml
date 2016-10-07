@@ -3,6 +3,15 @@ name = "fortinbras"
 version = "0.1.0"
 authors = ["Bo Ingram <boingram6@gmail.com>"]
 
+[[bin]]
+name = "fortinbras"
+path = "src/bin/fortinbras.rs"
+doc = false
+
+[lib]
+name = "fortinbras"
+path = "src/lib.rs"
+
 [dependencies]
 hyper = "0.9.10"
 log = "0.3.6"
