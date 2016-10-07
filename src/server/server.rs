@@ -30,8 +30,8 @@ impl FortinbrasServer {
             .handle(move |req: Request, mut res: Response| {
                 match req.method {
                     Method::Options => server.read().unwrap().options(res),
-                    Method::Post => server.write().unwrap().insert(req, res),
-                    Method::Delete => server.write().unwrap().remove(req, res), 
+                    Method::Post => server.write().unwrap().post(req, res),
+                    Method::Delete => server.write().unwrap().delete(req, res), 
                     Method::Get => server.read().unwrap().get(req, res),
                     _ => *res.status_mut() = StatusCode::MethodNotAllowed,
                 }
@@ -44,8 +44,8 @@ impl FortinbrasServer {
         add_cors_headers(&mut res);    
     }
 
-    /// Insert a key at POST /items with a body of {"key": "k", "val": "val"}
-    fn insert(&mut self, mut req: Request, mut res: Response) {
+    /// Routes all POST requests to the correct handlers
+    fn post(&mut self, req: Request, mut res: Response) {
         add_cors_headers(&mut res);
 
         let url = match get_url(&req) {
@@ -56,11 +56,16 @@ impl FortinbrasServer {
             }
         };
 
-        if url.path() != "/items" {
-            *res.status_mut() = StatusCode::NotFound;
-            return;
+        match url.path() { 
+            "/items" => self.insert_item(req, res),
+            _  => {
+                *res.status_mut() = StatusCode::NotFound;
+            },
         }
+    }
 
+    /// Insert a key at POST /items with a body of {"key": "k", "val": "val"}
+    fn insert_item(&mut self, mut req: Request, mut res: Response) {
         let mut json = String::new();
         if let Err(_) = req.read_to_string(&mut json) {
             *res.status_mut() = StatusCode::UnprocessableEntity;
@@ -83,8 +88,8 @@ impl FortinbrasServer {
         }
     }
 
-    /// Deletes a key via DELETE /items?key=k
-    fn remove(&mut self, mut req: Request, mut res: Response) {
+    /// Routes all DELETE requests to the appropriate handlers.
+    fn delete(&mut self, mut req: Request, mut res: Response) {
         add_cors_headers(&mut res);
 
         let url = match get_url(&req) {
@@ -95,11 +100,16 @@ impl FortinbrasServer {
             }
         };
 
-        if url.path() != "/items" {
-            *res.status_mut() = StatusCode::NotFound;
-            return;
+        match url.path() { 
+            "/items" => self.delete_item(req, res, url),
+            _  => {
+                *res.status_mut() = StatusCode::NotFound;
+            },
         }
+    }
 
+    /// Deletes a key via DELETE /items?key=k
+    fn delete_item(&mut self, mut req: Request, mut res: Response, url: Url) {
         let (query_key, arg) = match url.query_pairs().next() {
             Some((a, b)) => (a.into_owned(), b.into_owned()),
             None => { 
@@ -131,7 +141,7 @@ impl FortinbrasServer {
 
     }
 
-    /// Retrieves an item via GET /items?key=k
+    /// Routes all GET requests to the appropriate handlers 
     fn get(&self, req: Request, mut res: Response) {
         add_cors_headers(&mut res);
 
@@ -143,11 +153,16 @@ impl FortinbrasServer {
             }
         };
 
-        if url.path() != "/items" {
-            *res.status_mut() = StatusCode::NotFound;
-            return;
+        match url.path() { 
+            "/items" => self.get_item(req, res, url),
+            _  => {
+                *res.status_mut() = StatusCode::NotFound;
+            },
         }
+    }
 
+    /// Retrieves an item via GET /items?key=k    
+    fn get_item(&self, req: Request, mut res: Response, url: Url) { 
         let (query_key, arg) = match url.query_pairs().next() {
             Some((a, b)) => (a.into_owned(), b.into_owned()),
             None => { 
@@ -178,6 +193,7 @@ impl FortinbrasServer {
     }
 }
 
+/// Given a request, parse out the url 
 fn get_url<>(req: &Request) -> Option<Url> {
     let path = match req.uri {
         RequestUri::AbsolutePath(ref path) => path,
@@ -190,6 +206,7 @@ fn get_url<>(req: &Request) -> Option<Url> {
     Some(base_url.join(&path).unwrap())
 }
 
+/// Add CORS headers to an outgoing response
 fn add_cors_headers(res: &mut Response) {
     res.headers_mut().set(
         AccessControlAllowHeaders(vec![UniCase("Content-Type".to_owned())])
