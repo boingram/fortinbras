@@ -22,10 +22,9 @@ impl InMemoryStorage {
     /// Insert a value for a given key into the map, returning the optional
     /// previously existing value.
     pub fn insert(&mut self, item: &Item) -> &Item {
-        let key = item.key().to_lowercase();
-        debug!("Inserting key {} and value {}", key, item.val());
-        self.data.insert(key.clone(), item.clone());
-        self.get(&key).unwrap()
+        debug!("Inserting key {} and value {}", item.key(), item.val());
+        self.data.insert(item.key().clone(), item.clone());
+        self.get(item.key()).unwrap()
     }
 
     /// Remove a value for a given key from the map, returning the optional

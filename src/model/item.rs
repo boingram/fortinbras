@@ -32,7 +32,15 @@ impl Item {
 
     /// Takes a json string and creates an item
     pub fn from_json(json: &str) -> Result<Item, serde_json::Error> {
-        de::from_str(json)    
+        let res: Result<Item, serde_json::Error> = de::from_str(json);
+        match res {
+            Ok(mut item) => {
+                // maybe worth checking if the key is already lowercased
+                item.key = item.key.to_lowercase();
+                Ok(item)
+            },
+            Err(e) => Err(e)
+        }
     }
 }
 

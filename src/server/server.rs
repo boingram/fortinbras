@@ -83,8 +83,9 @@ impl FortinbrasServer {
         match self.storage_client.insert(&item) {
             Some(written_item) => {
                 *res.status_mut() = StatusCode::Created;
-                res.send(written_item.to_json().unwrap().as_bytes());
-                debug!("Server returning {} after write", json);
+                let res_json = written_item.to_json().unwrap();
+                res.send(res_json.as_bytes());
+                debug!("Server returning {} after write", res_json);
             }
             _ => {
                 *res.status_mut() = StatusCode::InternalServerError;
