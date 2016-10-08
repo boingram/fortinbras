@@ -80,11 +80,15 @@ impl FortinbrasServer {
             }
         };
 
-        match self.storage_client.insert(item.key().clone(), item.val().clone()) {
-            _ => {
+        match self.storage_client.insert(&item) {
+            Some(written_item) => {
                 *res.status_mut() = StatusCode::Created;
-                res.send(json.as_bytes());
+                res.send(written_item.to_json().unwrap().as_bytes());
                 debug!("Server returning {} after write", json);
+            }
+            _ => {
+                *res.status_mut() = StatusCode::InternalServerError;
+                error!("Unable to write item with key {} and val {}", item.key(), item.val());
             }
         }
     }
@@ -124,16 +128,8 @@ impl FortinbrasServer {
         }
 
         match self.storage_client.remove(&arg) {
-            Some(val) => {
-                match Item::new(arg, val.clone()).to_json() {
-                    Ok(x) => {
-                        res.send(x.as_bytes());
-                        debug!("Server returning {} after item deletion", x);
-                    }
-                    Err(_) => {
-                        *res.status_mut() = StatusCode::InternalServerError;
-                    }
-                };
+            Some(item) => {
+                res.send(item.to_json().unwrap().as_bytes());    
             }
             None => {
                 *res.status_mut() = StatusCode::NotFound;
@@ -178,8 +174,8 @@ impl FortinbrasServer {
 
         let cli_res = self.storage_client.get(&arg);
         match cli_res {
-            Some(val) => {
-                match Item::new(arg, val.clone()).to_json() {
+            Some(item) => {
+                match item.to_json() {
                     Ok(x) => {
                         res.send(x.as_bytes());
                         debug!("Server returning {} on read", x);

@@ -53,7 +53,7 @@ fn get_item(key: String, expected_val: String, expected_response: StatusCode) {
         assert!(size > 0);
 
         let item = Item::from_json(&body).unwrap();
-        assert_eq!(item.key(), &key);
+        assert_eq!(item.key(), &key.to_lowercase());
         assert_eq!(item.val(), &expected_val);
     }
 }
