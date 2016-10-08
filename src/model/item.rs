@@ -10,7 +10,7 @@ impl Item {
     /// Constructs a new item for a given key and value
     pub fn new(key: String, val: String) -> Item {
         Item {
-            key: key,
+            key: key.to_lowercase(),
             val: val,
         }
     }
