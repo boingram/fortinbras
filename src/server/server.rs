@@ -73,7 +73,8 @@ impl FortinbrasServer {
 
         let item = match Item::from_json(&json) {
             Ok(i) => i,
-            Err(_) => {
+            Err(error) => {
+                error!("Error parsing {}: {}", json, error);
                 *res.status_mut() = StatusCode::UnprocessableEntity;
                 return;
             }
@@ -89,7 +90,7 @@ impl FortinbrasServer {
     }
 
     /// Routes all DELETE requests to the appropriate handlers.
-    fn delete(&mut self, mut req: Request, mut res: Response) {
+    fn delete(&mut self, req: Request, mut res: Response) {
         add_cors_headers(&mut res);
 
         let url = match get_url(&req) {
@@ -101,7 +102,7 @@ impl FortinbrasServer {
         };
 
         match url.path() { 
-            "/items" => self.delete_item(req, res, url),
+            "/items" => self.delete_item(res, url),
             _  => {
                 *res.status_mut() = StatusCode::NotFound;
             },
@@ -109,7 +110,7 @@ impl FortinbrasServer {
     }
 
     /// Deletes a key via DELETE /items?key=k
-    fn delete_item(&mut self, mut req: Request, mut res: Response, url: Url) {
+    fn delete_item(&mut self, mut res: Response, url: Url) {
         let (query_key, arg) = match url.query_pairs().next() {
             Some((a, b)) => (a.into_owned(), b.into_owned()),
             None => { 
@@ -154,7 +155,7 @@ impl FortinbrasServer {
         };
 
         match url.path() { 
-            "/items" => self.get_item(req, res, url),
+            "/items" => self.get_item(res, url),
             _  => {
                 *res.status_mut() = StatusCode::NotFound;
             },
@@ -162,7 +163,7 @@ impl FortinbrasServer {
     }
 
     /// Retrieves an item via GET /items?key=k    
-    fn get_item(&self, req: Request, mut res: Response, url: Url) { 
+    fn get_item(&self, mut res: Response, url: Url) { 
         let (query_key, arg) = match url.query_pairs().next() {
             Some((a, b)) => (a.into_owned(), b.into_owned()),
             None => { 

@@ -2,6 +2,7 @@
 name = "fortinbras"
 version = "0.1.0"
 authors = ["Bo Ingram <boingram6@gmail.com>"]
+build = "build.rs"
 
 [[bin]]
 name = "fortinbras"
@@ -12,10 +13,14 @@ doc = false
 name = "fortinbras"
 path = "src/lib.rs"
 
+[build-dependencies]
+serde_codegen = "0.8.11"
+
 [dependencies]
 hyper = "0.9.10"
 log = "0.3.6"
 log4rs = { version = "0.4.8", features = [ "yaml" ] }
-rustc-serialize = "0.3"
+serde = "0.8.11"
+serde_json = "0.8"
 unicase = "1.4.0"
 

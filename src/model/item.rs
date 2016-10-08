@@ -1,12 +1,11 @@
-use rustc_serialize::json;
+include!(concat!(env!("OUT_DIR"), "/serde_types.rs"));
 
-#[derive(RustcDecodable, RustcEncodable)]
-/// A representation of an item stored in memory or on disk.
-pub struct Item {
-    key: String,
-    val: String,
-}
+use serde_json;
+use serde_json::de;
+use serde_json::ser;
 
+/// Implements the Item struct defined in src/serde_types.in.rs 
+/// (thanks serde youre the best) 
 impl Item {
     /// Constructs a new item for a given key and value
     pub fn new(key: String, val: String) -> Item {
@@ -27,13 +26,13 @@ impl Item {
     }
 
     /// Takes an item and coverts it to json
-    pub fn to_json(&self) -> Result<String, json::EncoderError> {
-        json::encode(&self)
+    pub fn to_json(&self) -> Result<String, serde_json::Error> {
+        ser::to_string(&self)
     }
 
     /// Takes a json string and creates an item
-    pub fn from_json(json: &str) -> Result<Item, json::DecoderError> {
-        json::decode(&json)
+    pub fn from_json(json: &str) -> Result<Item, serde_json::Error> {
+        de::from_str(json)    
     }
 }
 
@@ -48,10 +47,7 @@ mod tests {
         assert_eq!(item.key(), &String::from("k"));
         assert_eq!(item.val(), &String::from("v"));
 
-        let encoded = item.to_json().unwrap();
-        assert_eq!("{\"key\":\"k\",\"val\":\"v\"}", encoded);
-
-        let decoded: Item = Item::from_json(&encoded).unwrap();
+        let decoded: Item = Item::from_json(&item.to_json().unwrap()).unwrap();
         assert_eq!(item.key(), decoded.key());
         assert_eq!(item.val(), decoded.val());
     }
