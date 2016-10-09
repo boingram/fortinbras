@@ -3,4 +3,7 @@
 pub struct Item {
     key: String,
     val: String,
+
+    #[serde(default)]
+    deleted: bool,
 }

@@ -16,7 +16,25 @@ impl InMemoryStorage {
     /// Get a value for a given key from the in memory storage map.
     pub fn get(&self, key: &String) -> Option<&Item> {
         debug!("Retrieving value for key: {}", key);
-        self.data.get(key)
+
+        // An item can be in the map with a status of deleted, which means
+        // it will soon be blown away but still stays in the map for 
+        // a minute until we can safely clean it up. An item with deleted 
+        // status should be treated as not there for all consumers.
+        match self.data.get(key) {
+            Some(item) => {
+                if item.deleted() {
+                    return None 
+                }
+                Some(item)
+            }
+            None => None
+        }
+    }
+
+    /// Get an item out of the map as a mutable borrow.
+    fn get_mut(&mut self, key: &String) -> Option<&mut Item> {
+       self.data.get_mut(key) 
     }
 
     /// Insert a value for a given key into the map, returning the optional
@@ -27,11 +45,18 @@ impl InMemoryStorage {
         self.get(item.key()).unwrap()
     }
 
-    /// Remove a value for a given key from the map, returning the optional
-    /// previously existing value.
+    /// Set the deletion status of an item to true, but not yet deleting it
+    /// from the map.
     pub fn remove(&mut self, key: &String) -> Option<Item> {
         debug!("Removing key {}", key);
-        self.data.remove(key)
+        
+        let ref mut item = match self.get_mut(key) {
+            Some(item) => item,
+            None => return None 
+        };
+
+        item.set_deleted(true);
+        Some(item.clone()) 
     }
 }
 
@@ -50,7 +75,13 @@ mod tests {
         assert_eq!(store.insert(&item1), &item1);
         assert_eq!(store.get(&String::from("a")), Option::Some(&item1));
         assert_eq!(store.insert(&item2), &item2);
-        assert_eq!(store.remove(&String::from("a")), Option::Some(item2));
+
+        let deleted_item2 = store.remove(&String::from("a")).unwrap();
+        assert_eq!(item2.deleted(), false);
+        assert_eq!(deleted_item2.deleted(), true);
+        assert_eq!(item2.key(), deleted_item2.key());
+        assert_eq!(item2.val(), deleted_item2.val());
+
         assert_eq!(store.get(&String::from("a")), Option::None);
     }
 }

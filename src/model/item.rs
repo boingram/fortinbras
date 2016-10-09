@@ -12,6 +12,7 @@ impl Item {
         Item {
             key: key.to_lowercase(),
             val: val,
+            deleted: false,
         }
     }
 
@@ -23,6 +24,16 @@ impl Item {
     /// Accesses the value of an item
     pub fn val(&self) -> &String {
         &self.val
+    }
+
+    /// Set the deleted status of an item
+    pub fn set_deleted(&mut self, deleted: bool) {
+        self.deleted = deleted;
+    }
+
+    /// Access the deleted status of an item
+    pub fn deleted(&self) -> bool {
+        self.deleted
     }
 
     /// Takes an item and coverts it to json

@@ -48,7 +48,13 @@ mod tests {
         assert_eq!(store.insert(&item1), Option::Some(&item1));
         assert_eq!(store.get(&String::from("a")), Option::Some(&item1));
         assert_eq!(store.insert(&item2), Option::Some(&item2));
-        assert_eq!(store.remove(&String::from("a")), Option::Some(item2));
+    
+        let deleted_item2 = store.remove(&String::from("a")).unwrap();
+        assert_eq!(item2.deleted(), false);
+        assert_eq!(deleted_item2.deleted(), true);
+        assert_eq!(item2.key(), deleted_item2.key());
+        assert_eq!(item2.val(), deleted_item2.val());
+
         assert_eq!(store.get(&String::from("a")), Option::None);
     }
 
