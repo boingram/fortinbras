@@ -5,7 +5,7 @@ import Html.Attributes exposing (class, placeholder, value)
 import Html.Events exposing (onClick, onInput)
 import Items.Messages exposing (..)
 import Items.Models exposing (inputAsItem, Item, unwrap)
-import Items.Read exposing (itemFields, itemHeader)
+import Items.Read exposing (itemFields)
 
 
 view : Item -> Html Msg
@@ -29,6 +29,6 @@ form item =
 showItemOnSuccess : Item -> Html Msg
 showItemOnSuccess item =
     if item.key /= Nothing then
-        div [] [ itemHeader item, itemFields item ]
+        div [] [ itemFields item ]
     else
         div [] []

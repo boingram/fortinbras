@@ -11,7 +11,6 @@ view : Item -> Html Msg
 view item =
     div [ class "main" ]
         [ form item
-        , itemHeader item
         , itemFields item
         ]
 
@@ -22,16 +21,6 @@ form item =
         [ input [ placeholder "Key", onInput KeyInput, value (unwrap item.inputKey) ] []
         , button [ onClick ReadKey ] [ text "Read" ]
         ]
-
-
-
--- Print the item's key as a header
-
-
-itemHeader : Item -> Html Msg
-itemHeader item =
-    div []
-        [ h2 [] [ text (unwrap item.key) ] ]
 
 
 
