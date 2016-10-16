@@ -1,4 +1,6 @@
 use std::fs;
+use std::fs::File;
+use std::fs::OpenOptions;
 use std::path::Path;
 
 pub struct CommitLog {
@@ -7,8 +9,8 @@ pub struct CommitLog {
 
 impl CommitLog {
     pub fn init(data_dir: &str) -> CommitLog {
-        check_dir(dir);
-        let file = get_file(data_dir + "/commit.log");
+        check_dir(data_dir);
+        let file = get_file(&format!("{}/commit.log", data_dir));
         CommitLog { file: file }
     }
 }
@@ -35,10 +37,7 @@ fn create_dir(dir: &Path) {
 /// Get the commit log file
 fn get_file(name: &str) -> File {
     let path = Path::new(name);
-    if !path.exists() {
-        create_file(path);
-    }
-    match OpenOptions::new().append(true).open(name) {
+    match OpenOptions::new().create(true).append(true).open(name) {
         Ok(f) => f,
         Err(e) => {
             panic!("Error opening commit log file {}: {}", name, e);

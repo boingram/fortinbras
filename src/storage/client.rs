@@ -1,9 +1,11 @@
 use model::item::Item;
+use storage::commit_log::CommitLog;
 use storage::in_memory::InMemoryStorage;
 
 /// StorageClient exposes a simple interface to insert, read, and remove
 /// keys from Fortinbras.
 pub struct StorageClient {
+    commit_log: CommitLog,
     in_memory: InMemoryStorage,
 }
 
@@ -11,7 +13,10 @@ impl StorageClient {
     /// Creates a new instance of the StorageClient with newly initialized
     /// in-memory storage.
     pub fn new() -> StorageClient {
-        StorageClient { in_memory: InMemoryStorage::new() }
+        StorageClient {
+            commit_log: CommitLog::init(".data"),
+            in_memory: InMemoryStorage::new(),
+        }
     }
 
     /// Given a &String key, retrieve an optional result.
