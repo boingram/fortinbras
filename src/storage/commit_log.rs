@@ -1,7 +1,17 @@
 use std::fs;
 use std::path::Path;
 
+pub struct CommitLog {
+    file: File,
+}
 
+impl CommitLog {
+    pub fn init(data_dir: &str) -> CommitLog {
+        check_dir(dir);
+        let file = get_file(data_dir + "/commit.log");
+        CommitLog { file: file }
+    }
+}
 
 /// Check if a directory exists, create it if it doesn't
 fn check_dir(dir: &str) {
