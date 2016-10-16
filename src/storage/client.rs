@@ -13,9 +13,20 @@ impl StorageClient {
     /// Creates a new instance of the StorageClient with newly initialized
     /// in-memory storage.
     pub fn new() -> StorageClient {
-        StorageClient {
+        let mut client = StorageClient {
             commit_log: CommitLog::init(".data"),
             in_memory: InMemoryStorage::new(),
+        };
+
+        client.recover_from_commit_log();
+
+        client
+    }
+
+    /// Reads all items from the commit log and inserts them into the map
+    fn recover_from_commit_log(&mut self) {
+        for item in self.commit_log.read_items().iter() {
+            self.in_memory.insert(&item);
         }
     }
 
@@ -26,10 +37,6 @@ impl StorageClient {
 
     /// Insert a value for a given key, returning the written item.
     pub fn insert(&mut self, item: &Item) -> Option<&Item> {
-        // option isn't necessarily the best thing at the moment, but
-        // it will be so I'm going to leave the return type an option
-        // for now
-
         match self.commit_log.write(item) {
             Ok(_) => Some(self.in_memory.insert(item)),
             Err(e) => {

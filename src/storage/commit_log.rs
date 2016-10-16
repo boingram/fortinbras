@@ -2,6 +2,8 @@ use model::item::Item;
 use std::fs;
 use std::fs::File;
 use std::fs::OpenOptions;
+use std::io::BufRead;
+use std::io::BufReader;
 use std::io::Error;
 use std::io::Write;
 use std::path::Path;
@@ -29,6 +31,25 @@ impl CommitLog {
         let json = format!("{}\n", item.to_json().unwrap());
         self.file.write(json.as_bytes())
     }
+
+    /// Read all items from commit log
+    pub fn read_items(&self) -> Vec<Item> {
+        let mut items = Vec::new();
+        let file = BufReader::new(&self.file);
+        for line in file.lines() {
+            match line {
+                Ok(line) => {
+                    match Item::from_json(&line) {
+                        Ok(item) => items.push(item),
+                        Err(e) => error!("Error deserializing {}: {}", e, line),
+                    }
+                }
+                Err(e) => panic!("Error reading from commit log: {}", e),
+            }
+        }
+        info!("{} items read from commit log", items.len());
+        items
+    }
 }
 
 /// Check if a directory exists, create it if it doesn't
@@ -52,7 +73,11 @@ fn create_dir(dir: &Path) {
 
 /// Get the commit log file
 fn get_file(name: &str) -> File {
-    match OpenOptions::new().create(true).append(true).open(name) {
+    match OpenOptions::new()
+        .create(true)
+        .read(true)
+        .append(true)
+        .open(name) {
         Ok(f) => f,
         Err(e) => {
             panic!("Error opening commit log file {}: {}", name, e);
