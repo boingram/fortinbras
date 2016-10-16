@@ -21,8 +21,8 @@ impl StorageClient {
 
     /// Insert a value for a given key, returning the written item.
     pub fn insert(&mut self, item: &Item) -> Option<&Item> {
-        // option isn't necessarily the best thing at the moment, but 
-        // it will be so I'm going to leave the return type an option 
+        // option isn't necessarily the best thing at the moment, but
+        // it will be so I'm going to leave the return type an option
         // for now
         Some(self.in_memory.insert(item))
     }
@@ -48,7 +48,7 @@ mod tests {
         assert_eq!(store.insert(&item1), Option::Some(&item1));
         assert_eq!(store.get(&String::from("a")), Option::Some(&item1));
         assert_eq!(store.insert(&item2), Option::Some(&item2));
-    
+
         let deleted_item2 = store.remove(&String::from("a")).unwrap();
         assert_eq!(item2.deleted(), false);
         assert_eq!(deleted_item2.deleted(), true);

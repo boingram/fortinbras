@@ -4,8 +4,8 @@ use serde_json;
 use serde_json::de;
 use serde_json::ser;
 
-/// Implements the Item struct defined in src/serde_types.in.rs 
-/// (thanks serde youre the best) 
+/// Implements the Item struct defined in src/serde_types.in.rs
+/// (thanks serde youre the best)
 impl Item {
     /// Constructs a new item for a given key and value
     pub fn new(key: String, val: String) -> Item {
@@ -49,8 +49,8 @@ impl Item {
                 // maybe worth checking if the key is already lowercased
                 item.key = item.key.to_lowercase();
                 Ok(item)
-            },
-            Err(e) => Err(e)
+            }
+            Err(e) => Err(e),
         }
     }
 }

@@ -10,7 +10,7 @@ use std::sync::RwLock;
 use storage::client::StorageClient;
 use unicase::UniCase;
 
-/// Web server containing a storage client. Accepts HTTP requests to create, 
+/// Web server containing a storage client. Accepts HTTP requests to create,
 /// remove, and update keys.
 pub struct FortinbrasServer {
     storage_client: StorageClient,
@@ -19,9 +19,8 @@ pub struct FortinbrasServer {
 /// Implementation of the Fortinbras Server. Launches server and handles HTTP
 /// requests.
 impl FortinbrasServer {
-
     /// Launches a server with a read/write lock wrapped FortinbrasServer that
-    /// accesses a storage client. 
+    /// accesses a storage client.
     pub fn launch(port: String) {
         let server = RwLock::new(FortinbrasServer { storage_client: StorageClient::new() });
 
@@ -39,9 +38,9 @@ impl FortinbrasServer {
             .unwrap();
     }
 
-    /// Respond to preflight requests from fortinbras-ui 
+    /// Respond to preflight requests from fortinbras-ui
     fn options(&self, mut res: Response) {
-        add_cors_headers(&mut res);    
+        add_cors_headers(&mut res);
     }
 
     /// Routes all POST requests to the correct handlers
@@ -58,9 +57,9 @@ impl FortinbrasServer {
 
         match url.path() { 
             "/items" => self.insert_item(req, res),
-            _  => {
+            _ => {
                 *res.status_mut() = StatusCode::NotFound;
-            },
+            }
         }
     }
 
@@ -89,7 +88,9 @@ impl FortinbrasServer {
             }
             _ => {
                 *res.status_mut() = StatusCode::InternalServerError;
-                error!("Unable to write item with key {} and val {}", item.key(), item.val());
+                error!("Unable to write item with key {} and val {}",
+                       item.key(),
+                       item.val());
             }
         }
     }
@@ -108,9 +109,9 @@ impl FortinbrasServer {
 
         match url.path() { 
             "/items" => self.delete_item(res, url),
-            _  => {
+            _ => {
                 *res.status_mut() = StatusCode::NotFound;
-            },
+            }
         }
     }
 
@@ -118,9 +119,9 @@ impl FortinbrasServer {
     fn delete_item(&mut self, mut res: Response, url: Url) {
         let (query_key, arg) = match url.query_pairs().next() {
             Some((a, b)) => (a.into_owned(), b.into_owned()),
-            None => { 
+            None => {
                 *res.status_mut() = StatusCode::BadRequest;
-                return ;
+                return;
             }
         };
         if query_key != "key" {
@@ -130,7 +131,7 @@ impl FortinbrasServer {
 
         match self.storage_client.remove(&arg) {
             Some(item) => {
-                res.send(item.to_json().unwrap().as_bytes());    
+                res.send(item.to_json().unwrap().as_bytes());
             }
             None => {
                 *res.status_mut() = StatusCode::NotFound;
@@ -139,7 +140,7 @@ impl FortinbrasServer {
 
     }
 
-    /// Routes all GET requests to the appropriate handlers 
+    /// Routes all GET requests to the appropriate handlers
     fn get(&self, req: Request, mut res: Response) {
         add_cors_headers(&mut res);
 
@@ -153,19 +154,19 @@ impl FortinbrasServer {
 
         match url.path() { 
             "/items" => self.get_item(res, url),
-            _  => {
+            _ => {
                 *res.status_mut() = StatusCode::NotFound;
-            },
+            }
         }
     }
 
-    /// Retrieves an item via GET /items?key=k    
-    fn get_item(&self, mut res: Response, url: Url) { 
+    /// Retrieves an item via GET /items?key=k
+    fn get_item(&self, mut res: Response, url: Url) {
         let (query_key, arg) = match url.query_pairs().next() {
             Some((a, b)) => (a.into_owned(), b.into_owned()),
-            None => { 
+            None => {
                 *res.status_mut() = StatusCode::BadRequest;
-                return ;
+                return;
             }
         };
         if query_key != "key" {
@@ -191,13 +192,11 @@ impl FortinbrasServer {
     }
 }
 
-/// Given a request, parse out the url 
-fn get_url<>(req: &Request) -> Option<Url> {
+/// Given a request, parse out the url
+fn get_url(req: &Request) -> Option<Url> {
     let path = match req.uri {
         RequestUri::AbsolutePath(ref path) => path,
-        _ => {
-            return None        
-        }
+        _ => return None,
     };
 
     let base_url = Url::parse(&"http://localhost:7341").unwrap();
@@ -206,13 +205,8 @@ fn get_url<>(req: &Request) -> Option<Url> {
 
 /// Add CORS headers to an outgoing response
 fn add_cors_headers(res: &mut Response) {
-    res.headers_mut().set(
-        AccessControlAllowHeaders(vec![UniCase("Content-Type".to_owned())])
-    );
-    res.headers_mut().set(
-        AccessControlAllowMethods(vec![Method::Get, Method::Post, Method::Delete])
-    );
-    res.headers_mut().set(
-        AccessControlAllowOrigin::Value("*".to_owned())
-    );
+    res.headers_mut().set(AccessControlAllowHeaders(vec![UniCase("Content-Type".to_owned())]));
+    res.headers_mut()
+        .set(AccessControlAllowMethods(vec![Method::Get, Method::Post, Method::Delete]));
+    res.headers_mut().set(AccessControlAllowOrigin::Value("*".to_owned()));
 }
