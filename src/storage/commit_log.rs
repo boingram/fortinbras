@@ -1,6 +1,9 @@
+use model::item::Item;
 use std::fs;
 use std::fs::File;
 use std::fs::OpenOptions;
+use std::io::Error;
+use std::io::Write;
 use std::path::Path;
 
 pub struct CommitLog {
@@ -12,6 +15,11 @@ impl CommitLog {
         check_dir(data_dir);
         let file = get_file(&format!("{}/commit.log", data_dir));
         CommitLog { file: file }
+    }
+
+    pub fn write(&mut self, item: &Item) -> Result<usize, Error> {
+        let json = format!("{}\n", item.to_json().unwrap());
+        self.file.write(json.as_bytes())
     }
 }
 

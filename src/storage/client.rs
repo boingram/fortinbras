@@ -29,7 +29,16 @@ impl StorageClient {
         // option isn't necessarily the best thing at the moment, but
         // it will be so I'm going to leave the return type an option
         // for now
-        Some(self.in_memory.insert(item))
+
+        match self.commit_log.write(item) {
+            Ok(_) => Some(self.in_memory.insert(item)),
+            Err(e) => {
+                error!("Error writing item with key {} to commit log: {}",
+                       item.key(),
+                       e);
+                None
+            }
+        }
     }
 
     /// Remove a key, returning the optional previously existing value.
