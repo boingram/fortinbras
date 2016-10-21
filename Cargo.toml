@@ -18,8 +18,10 @@ serde_codegen = "0.8.11"
 
 [dependencies]
 hyper = "0.9.10"
+iron = "0.4.0"
 log = "0.3.6"
 log4rs = { version = "0.4.8", features = [ "yaml" ] }
+router = "*"
 serde = "0.8.11"
 serde_json = "0.8"
 unicase = "1.4.0"
