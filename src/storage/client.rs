@@ -26,7 +26,11 @@ impl StorageClient {
     /// Reads all items from the commit log and inserts them into the map
     fn recover_from_commit_log(&mut self) {
         for item in self.commit_log.read_items().iter() {
-            self.in_memory.insert(&item);
+            if item.deleted() {
+                self.in_memory.remove(item.key());
+            } else {
+                self.in_memory.insert(&item);
+            }
         }
     }
 
@@ -50,7 +54,15 @@ impl StorageClient {
 
     /// Remove a key, returning the optional previously existing value.
     pub fn remove(&mut self, key: &String) -> Option<Item> {
-        self.in_memory.remove(&key.to_lowercase())
+        match self.commit_log.write(&Item::new_deleted(key.clone())) { 
+            Ok(_) => self.in_memory.remove(&key.to_lowercase()),
+            Err(e) => {
+                error!("Error removing item with key {} via commit log write: {}",
+                       key.to_lowercase(),
+                       e);
+                None
+            }
+        }
     }
 }
 

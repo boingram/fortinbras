@@ -16,6 +16,15 @@ impl Item {
         }
     }
 
+    /// Construct a new item with an empty val and a deleted status of true
+    pub fn new_deleted(key: String) -> Item {
+        Item {
+            key: key.to_lowercase(),
+            val: String::new(),
+            deleted: true,
+        }
+    }
+
     /// Accesses the key of an item
     pub fn key(&self) -> &String {
         &self.key
