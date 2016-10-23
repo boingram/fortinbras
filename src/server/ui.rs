@@ -8,7 +8,7 @@ pub fn launch() {
     let mut router = Router::new();
     router.get("/", home, "home");
     router.get("/app.js", app, "app");
-    let mut chain = Chain::new(router);
+    let chain = Chain::new(router);
     info!("Launching Fortinbras UI on port 3000");
     Iron::new(chain).http("localhost:3000").unwrap();
 }
