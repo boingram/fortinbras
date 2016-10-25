@@ -12,9 +12,9 @@ pub struct StorageClient {
 impl StorageClient {
     /// Creates a new instance of the StorageClient with newly initialized
     /// in-memory storage.
-    pub fn new() -> StorageClient {
+    pub fn new(data_dir: String) -> StorageClient {
         let mut client = StorageClient {
-            commit_log: CommitLog::init(".data"),
+            commit_log: CommitLog::init(&data_dir),
             in_memory: InMemoryStorage::new(),
         };
 

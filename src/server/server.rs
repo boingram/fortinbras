@@ -21,8 +21,8 @@ pub struct FortinbrasServer {
 impl FortinbrasServer {
     /// Launches a server with a read/write lock wrapped FortinbrasServer that
     /// accesses a storage client.
-    pub fn launch(port: String) {
-        let server = RwLock::new(FortinbrasServer { storage_client: StorageClient::new() });
+    pub fn launch(port: String, data_dir: String) {
+        let server = RwLock::new(FortinbrasServer { storage_client: StorageClient::new(data_dir) });
 
         Server::http(format!("127.0.0.1:{}", port).as_str())
             .unwrap()
