@@ -1,0 +1,3 @@
+data_dir = ".data"
+server_port = "7341"
+ui_port = "3000"

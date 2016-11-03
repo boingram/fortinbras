@@ -1,3 +1,5 @@
+use bincode::rustc_serialize::{encode, decode};
+use bincode::SizeLimit;
 use model::item::Item;
 use std::fs;
 use std::fs::File;
@@ -28,8 +30,8 @@ impl CommitLog {
 
     /// Write a given item to the commit log.
     pub fn write(&mut self, item: &Item) -> Result<usize, Error> {
-        let json = format!("{}\n", item.to_json().unwrap());
-        self.file.write(json.as_bytes())
+        let encoded: Vec<u8> = encode(item, SizeLimit::Infinite).unwrap();
+        self.file.write(&encoded)
     }
 
     /// Read all items from commit log
@@ -39,7 +41,7 @@ impl CommitLog {
         for line in file.lines() {
             match line {
                 Ok(line) => {
-                    match Item::from_json(&line) {
+                    match decode(&line.as_bytes()) {
                         Ok(item) => items.push(item),
                         Err(e) => error!("Error deserializing {}: {}", e, line),
                     }

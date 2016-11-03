@@ -1,3 +1,5 @@
+extern crate bincode;
+
 extern crate hyper;
 
 extern crate iron;
