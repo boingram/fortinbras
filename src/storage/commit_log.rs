@@ -4,9 +4,9 @@ use model::item::Item;
 use std::fs;
 use std::fs::File;
 use std::fs::OpenOptions;
-use std::io::BufRead;
 use std::io::BufReader;
 use std::io::Error;
+use std::io::Read;
 use std::io::Write;
 use std::path::Path;
 
@@ -31,24 +31,32 @@ impl CommitLog {
     /// Write a given item to the commit log.
     pub fn write(&mut self, item: &Item) -> Result<usize, Error> {
         let encoded: Vec<u8> = encode(item, SizeLimit::Infinite).unwrap();
+        info!("Writing {} bytes to commit log", encoded.len());
         self.file.write(&encoded)
     }
 
     /// Read all items from commit log
     pub fn read_items(&self) -> Vec<Item> {
         let mut items = Vec::new();
-        let file = BufReader::new(&self.file);
-        for line in file.lines() {
-            match line {
-                Ok(line) => {
-                    match decode(&line.as_bytes()) {
-                        Ok(item) => items.push(item),
-                        Err(e) => error!("Error deserializing {}: {}", e, line),
+        let mut file = BufReader::new(&self.file);
+        let mut encoded: Vec<u8> = Vec::new();
+        let log = file.read_to_end(&mut encoded);
+
+        match log {
+            Ok(_) => {
+                while encoded.len() > 0 {
+                    match decode(&encoded) {
+                        Ok(item) => {
+                            encoded = encoded.split_off(get_encoded_size(&item));
+                            items.push(item);
+                        }
+                        Err(e) => error!("Error deserializing commit log: {}", e),
                     }
                 }
-                Err(e) => panic!("Error reading from commit log: {}", e),
             }
+            Err(e) => error!("Error reading from commit log: {}", e),
         }
+
         info!("{} items read from commit log", items.len());
         items
     }
@@ -85,4 +93,10 @@ fn get_file(name: &str) -> File {
             panic!("Error opening commit log file {}: {}", name, e);
         }
     }
+}
+
+/// Get the size of an object when encoded
+fn get_encoded_size(item: &Item) -> usize {
+    let encoded: Vec<u8> = encode(item, SizeLimit::Infinite).unwrap();
+    encoded.len()
 }
