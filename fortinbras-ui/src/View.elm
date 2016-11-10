@@ -48,5 +48,5 @@ page model =
 notImplementedView : Html msg
 notImplementedView =
     div [ class "main" ]
-        [ text "Not implemented"
+        [ text ""
         ]

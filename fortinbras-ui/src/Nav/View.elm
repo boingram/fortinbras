@@ -18,8 +18,7 @@ links : Nav -> Html Msg
 links nav =
     div []
         [ ul []
-            [ li [] [ clickable nav HomeRoute "Home" ]
-            , li [] [ clickable nav CreateItemRoute "Create" ]
+            [ li [] [ clickable nav CreateItemRoute "Create" ]
             , li [] [ clickable nav DeleteItemRoute "Delete" ]
             , li [] [ clickable nav ReadItemRoute "Read" ]
             ]
